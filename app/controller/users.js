@@ -5,16 +5,10 @@ const getAllUsers = async (req, res, next) => {
     try {
         // const [data] = await userModel.getAllUser();
         const data = await userModel.findAll();
+        responseHandle.ok(res, {data}, 'GET users successfully');
 
-        res.json({
-            message: 'GET users successfully',
-            data: data
-        })
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal Server Error',
-            serverMessage: error
-        })
+        responseHandle.error(res, error);
     }
 };
 

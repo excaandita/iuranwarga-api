@@ -39,7 +39,8 @@ const created = (res, data, title = null) => {
 
 const error = (res, data) => responseWithData(res, 500, {
     status: 500,
-    message: "Oops! some error occurred"
+    message: "Oops! some error occurred",
+    data: data
 })
 
 const badRequest = (res, data) => responseWithData(res, 400, {

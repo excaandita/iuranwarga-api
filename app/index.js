@@ -10,8 +10,11 @@ let cors            = require('cors')
 const session       = require('express-session');
 const flash         = require('connect-flash');
 
+const authRoutes    = require('./routes/auth');
 const usersRoutes   = require('./routes/users');
-const middlewareLog = require('./middleware/logs');
+
+const middlewareLog     = require('./middleware/logs');
+const middlewareAuth    = require('./middleware/auth');
 
 const app   = express();
 let URL     = `/api`;
@@ -35,7 +38,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Routes For Login
+app.use(`${URL}`, authRoutes);
+
+// Middleware
 app.use(middlewareLog);
+app.use(middlewareAuth);
 
 // Routes 
 app.use(`${URL}/users`, usersRoutes);
