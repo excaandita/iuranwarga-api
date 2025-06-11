@@ -1,12 +1,16 @@
-# Pattern Express MySQL
+# API - Aplikasi manajemen Iuran Warga
 
-Pattern API -> Struktur base REST API dengan menggunakan Express dan NodeJS serta koneksi ke Database MySQL
+Aplikasi ini dibuat untuk mempermudah mengelola keuangan masyarakat di sebuah RT / RW dimana setiap bulannya terdapat iuran yang dibayarkan oleh warga setempat.
 
 ## Fitur Utama
 
-- Fitur 1: CRUD
-- Fitur 2: Middleware / AUTH
-- Fitur 3: Koneksi DB
+- Fitur 1: **Manajemen Warga** 
+- Fitur 2: **Manajemen Penarikan Iuran**
+- Fitur 3: **Rekap & Laporan Keuangan**
+- Fitur 4: **Manajemen Pengeluaran**
+- Fitur 5: **Dashboard Admin**
+- Fitur 6: **Laporan Per Warga**
+
 
 ## Teknologi yang Digunakan
 
