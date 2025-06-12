@@ -1,19 +1,67 @@
+const responseHandle = require('../helpers/response.utils');
 const userModel = require('../models/users');
 const bcrypt    = require('bcryptjs');
+const { Op }    = require('sequelize');
 
 const getAllUsers = async (req, res, next) => {
     try {
-        // const [data] = await userModel.getAllUser();
-        const data = await userModel.findAll();
-        responseHandle.ok(res, {data}, 'GET users successfully');
+        const page   = parseInt(req.query.page)  || 1;
+        const limit  = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const { name, address } = req.query;
+
+        let where = {};
+        if (name) {
+            where.fullname = { [Op.like]: `%${name}%` };
+        }
+        if (address) {
+            where.address    = { [Op.like]: `%${address}%` };
+        }
+
+        const result = await userModel.findAndCountAll({
+            where,
+            limit,
+            offset,
+            order: [['id', 'DESC']]
+        });
+
+        const totalPages = Math.ceil(result.count / limit);
+
+        responseHandle.ok(res, {
+            totalItems: result.count,
+            totalPages: totalPages,
+            currentPage: page,
+            perPage: limit,
+            data: result.rows
+        }, 'GET users successfully');
 
     } catch (error) {
         responseHandle.error(res, error);
     }
 };
 
+const getUserById = async (req, res, next) => {
+    const { idUser } = req.params;
+
+    try {
+        const user = await userModel.findByPk(idUser);
+        if (!user) {
+            return res.status(404).json({
+                status: 404,
+                message: 'User not found',
+                data: null,
+            });
+        }
+
+        responseHandle.ok(res, user, 'User retrieved successfully');
+    } catch (error) {
+        responseHandle.error(res, error);
+    }
+};
+
 const createNewUser = async (req, res) => {
-    const { username, email, fullname, password, address, phoneNumber, group_id } = req.body;
+    const { username, email, fullname, password, address, phoneNumber, group_role } = req.body;
 
     if (!username || !email || !fullname || !password || !address || !phoneNumber) {
         return res.status(400).json({
@@ -47,8 +95,7 @@ const createNewUser = async (req, res) => {
             fullname,
             password,
             address,
-            phoneNumber,
-            group_id: group_id || 1,
+            phoneNumber
         });
 
         res.status(201).json({
@@ -146,10 +193,11 @@ const deleteUser = async (req, res) => {
             serverMessage: error
         })
     }
-}
+};
 
 module.exports = {
     getAllUsers,
+    getUserById,
     createNewUser,
     updateUser,
     deleteUser

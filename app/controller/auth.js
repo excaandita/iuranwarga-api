@@ -31,7 +31,7 @@ const login = async (req, res, next) => {
     }).catch((error) => {
         responseHandle.error(res, error);
 
-        next();
+        // next();
     });
 }
 

@@ -78,9 +78,9 @@ const User = sequelize.define('User', {
             },
         },
     },
-    group_id: { 
-        type: DataTypes.INTEGER,
-        defaultValue: 1, 
+    group_role: { 
+        type: DataTypes.ENUM('Admin', 'User'),
+        defaultValue: 'User', 
     },
     status: {
         type: DataTypes.ENUM('Y', 'N'),

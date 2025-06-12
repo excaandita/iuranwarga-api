@@ -9,7 +9,6 @@ var debug = require('debug')('express_mysql:server');
 var http = require('http');
 
 const sequelize = require('../config/database');
-const Person = require('../app/models/persons'); // Import model baru
 /**
  * Get port from environment and store in Express.
  */

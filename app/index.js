@@ -1,35 +1,39 @@
-require('dotenv').config()
+require('dotenv').config();
 
-const express       = require('express');
+const express        = require('express');
+const createError    = require('http-errors');
+const path           = require('path');
+const cookieParser   = require('cookie-parser');
+const logger         = require('morgan');
+const cors           = require('cors');
+const session        = require('express-session');
+const flash          = require('connect-flash');
 
-let createError     = require('http-errors');
-let path            = require('path');
-let cookieParser    = require('cookie-parser');
-let logger          = require('morgan');
-let cors            = require('cors')
-const session       = require('express-session');
-const flash         = require('connect-flash');
+// Routes
+const authRoutes     = require('./routes/auth');
+const usersRoutes    = require('./routes/users');
+const wargaRoutes    = require('./routes/wargas');
 
-const authRoutes    = require('./routes/auth');
-const usersRoutes   = require('./routes/users');
+// Middleware
+const middlewareLog  = require('./middleware/logs');
+const middlewareAuth = require('./middleware/auth');
 
-const middlewareLog     = require('./middleware/logs');
-const middlewareAuth    = require('./middleware/auth');
+const app  = express();
+const URL  = '/api';
 
-const app   = express();
-let URL     = `/api`;
 
-// view engine setup
+// ===== View engine setup =====
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+// ===== Global Middleware =====
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,  
     cookie: { secure: true }
 }));
-
 app.use(cors());
 app.use(flash());
 app.use(logger('dev'));
@@ -38,30 +42,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Routes For Login
-app.use(`${URL}`, authRoutes);
 
-// Middleware
-app.use(middlewareLog);
-app.use(middlewareAuth);
+// ===== Routes =====
+app.use(`${URL}`, authRoutes);         // Public route
+app.use(middlewareLog);               // Custom logging
+app.use(middlewareAuth);              // Auth check
 
-// Routes 
 app.use(`${URL}/users`, usersRoutes);
+app.use(`${URL}/warga`, wargaRoutes);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
+
+// ===== Error Handling =====
+app.use((req, res, next) => {
     next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message  = err.message;
-    res.locals.error    = req.app.get('env') === 'development' ? err : {};
-    
-    // render the error page
+app.use((err, req, res, next) => {
+    res.locals.message = err.message;
+    res.locals.error   = req.app.get('env') === 'development' ? err : {};
+
     res.status(err.status || 500);
     res.render('error');
 });
+
 
 module.exports = app;
