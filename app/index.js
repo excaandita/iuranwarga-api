@@ -13,6 +13,7 @@ const flash          = require('connect-flash');
 const authRoutes     = require('./routes/auth');
 const usersRoutes    = require('./routes/users');
 const wargaRoutes    = require('./routes/wargas');
+const tarifRoutes    = require('./routes/tarifs');
 
 // Middleware
 const middlewareLog  = require('./middleware/logs');
@@ -50,6 +51,7 @@ app.use(middlewareAuth);              // Auth check
 
 app.use(`${URL}/users`, usersRoutes);
 app.use(`${URL}/warga`, wargaRoutes);
+app.use(`${URL}/tarif`, tarifRoutes);
 
 
 // ===== Error Handling =====
